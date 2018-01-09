@@ -1,0 +1,7 @@
+*-sim
+*.asc
+*.asc.template
+*.bin
+*.blif
+*.hex
+*.vcd
