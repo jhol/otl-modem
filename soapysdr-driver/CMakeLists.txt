@@ -1,38 +1,37 @@
-########################################################################
-# Project setup -- only needed if device support is a stand-alone build
-# We recommend that the support module be built in-tree with the driver.
-########################################################################
+##
+## This file is part of the otl-modem project.
+##
+## Copyright (C) 2018 Joel Holdsworth <joel@airwebreathe.org.uk>
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+
 cmake_minimum_required(VERSION 2.6)
-project(SoapySDRMyDevice CXX)
+project(SoapySDROTLModem CXX)
 enable_testing()
 
-#select the release build type by default to get optimization flags
 if(NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE "Release")
-   message(STATUS "Build type not specified: defaulting to release.")
+    set(CMAKE_BUILD_TYPE "Release")
+    message(STATUS "Build type not specified: defaulting to release.")
 endif(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "")
 
-########################################################################
-# Header and library resources needed to communicate with the device.
-# These may be found within the build tree or in an external project.
-########################################################################
-set(MY_DEVICE_INCLUDE_DIRS ...)
-set(MY_DEVICE_LIBRARIES ...)
+find_package(SoapySDR REQUIRED)
 
-########################################################################
-# build the module
-########################################################################
-find_package(SoapySDR CONFIG)
-
-if (NOT SoapySDR_FOUND)
-    message(WARNING "SoapySDR development files not found - skipping support")
-    return()
-endif ()
-
-include_directories(${MY_DEVICE_INCLUDE_DIRS})
+include_directories(${OTL_MODEM_INCLUDE_DIRS})
 SOAPY_SDR_MODULE_UTIL(
-    TARGET MyDevice
-    SOURCES MyDeviceSupport.cpp
-    LIBRARIES ${MY_DEVICE_LIBRARIES}
+    TARGET OTLModem
+    SOURCES otl-modem-support.cpp
+    LIBRARIES ${OTL_MODEM_LIBRARIES}
 )
