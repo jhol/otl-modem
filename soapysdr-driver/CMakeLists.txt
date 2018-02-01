@@ -29,9 +29,14 @@ set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "")
 
 find_package(SoapySDR REQUIRED)
 
-include_directories(${OTL_MODEM_INCLUDE_DIRS})
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(PKGDEPS REQUIRED libftdi>=0.20 libusb>=0.1.12)
+
+include_directories(${OTL_MODEM_INCLUDE_DIRS} ${PKGDEPS_INCLUDE_DIRS})
+link_directories(${PKGDEPS_LIBRARY_DIRS})
+
 SOAPY_SDR_MODULE_UTIL(
     TARGET OTLModem
     SOURCES otl-modem-support.cpp
-    LIBRARIES ${OTL_MODEM_LIBRARIES}
+    LIBRARIES ${OTL_MODEM_LIBRARIES} ${PKGDEPS_LIBRARIES}
 )
