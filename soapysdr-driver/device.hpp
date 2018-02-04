@@ -25,6 +25,18 @@ class Device : public SoapySDR::Device {
 public:
     Device(const SoapySDR::Kwargs &args);
 
+public:
+    std::string getDriverKey() const;
+    std::string getHardwareKey() const;
+    SoapySDR::Kwargs getHardwareInfo() const;
+
+    size_t getNumChannels(const int dir) const;
+
+    std::vector<std::string> getStreamFormats(const int direction,
+        const size_t channel) const;
+    std::string getNativeStreamFormat(const int direction,
+        const size_t channel, double &fullScale) const;
+
 private:
     const SoapySDR::Kwargs args_;
 };
