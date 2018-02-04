@@ -81,8 +81,7 @@ SoapySDR::KwargsList findOTLModem(const SoapySDR::Kwargs &args) {
 }
 
 SoapySDR::Device *makeOTLModem(const SoapySDR::Kwargs &args) {
-    (void)args;
-    return new OTLModem::Device();
+    return new OTLModem::Device(args);
 }
 
 static SoapySDR::Registry registerOTLModem("OTLModem",

@@ -21,7 +21,8 @@
 
 namespace OTLModem {
 
-Device::Device() {
+Device::Device(const SoapySDR::Kwargs &args) :
+    args_(args) {
 }
 
 }

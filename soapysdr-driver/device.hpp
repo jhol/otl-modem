@@ -23,7 +23,10 @@ namespace OTLModem {
 
 class Device : public SoapySDR::Device {
 public:
-    explicit Device();
+    Device(const SoapySDR::Kwargs &args);
+
+private:
+    const SoapySDR::Kwargs args_;
 };
 
 }
