@@ -37,6 +37,6 @@ link_directories(${PKGDEPS_LIBRARY_DIRS})
 
 SOAPY_SDR_MODULE_UTIL(
     TARGET OTLModem
-    SOURCES otl-modem-support.cpp
+    SOURCES device.cpp otl-modem-support.cpp
     LIBRARIES ${OTL_MODEM_LIBRARIES} ${PKGDEPS_LIBRARIES}
 )

@@ -22,17 +22,10 @@
 #include <memory>
 
 #include <ftdi.h>
-#include <SoapySDR/Device.hpp>
 #include <SoapySDR/Registry.hpp>
 #include <usb.h>
 
-class OTLModem : public SoapySDR::Device {
-public:
-    explicit OTLModem();
-};
-
-OTLModem::OTLModem() {
-}
+#include "device.hpp"
 
 static SoapySDR::KwargsList listDevices() {
     ftdi_device_list *devlist = nullptr;
@@ -89,7 +82,7 @@ SoapySDR::KwargsList findOTLModem(const SoapySDR::Kwargs &args) {
 
 SoapySDR::Device *makeOTLModem(const SoapySDR::Kwargs &args) {
     (void)args;
-    return new OTLModem();
+    return new OTLModem::Device();
 }
 
 static SoapySDR::Registry registerOTLModem("OTLModem",
