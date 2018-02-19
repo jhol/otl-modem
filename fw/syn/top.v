@@ -28,7 +28,7 @@
  */
 
 module top(clk_100mhz, adclk, addb, daclk, dadb);
-parameter ClkFreq = 50000000; // Hz
+parameter ClkFreq = 32031250; // Hz
 
 input clk_100mhz;
 output adclk;
@@ -37,7 +37,7 @@ output daclk;
 output [7:0] dadb;
 
 // Clock Generator
-wire clk_50mhz;
+wire clk_32mhz;
 wire pll_locked;
 
 SB_PLL40_PAD #(
@@ -47,27 +47,29 @@ SB_PLL40_PAD #(
   .PLLOUT_SELECT("GENCLK"),
   .FDA_FEEDBACK(4'b1111),
   .FDA_RELATIVE(4'b1111),
-  .DIVR(4'b0000),
-  .DIVF(7'b0000111),
-  .DIVQ(3'b100),
-  .FILTER_RANGE(3'b101)
+  .DIVR(4'b0011),
+  .DIVF(7'b0101000),
+  .DIVQ(3'b101),
+  .FILTER_RANGE(3'b010)
 ) pll (
   .PACKAGEPIN(clk_100mhz),
-  .PLLOUTGLOBAL(clk_50mhz),
+  .PLLOUTGLOBAL(clk_32mhz),
   .LOCK(pll_locked),
   .BYPASS(1'b0),
   .RESETB(1'b1)
 );
 
-wire clk = clk_50mhz;
+// ADC/DAC pass-through
+wire clk = clk_32mhz;
 
-// Reset Generator
-reg [3:0] resetn_gen = 0;
-reg reset;
+assign adclk = clk_32mhz;
+assign daclk = clk_32mhz;
+assign dadb = addb;
 
-always @(posedge clk) begin
-  reset <= !&resetn_gen;
-  resetn_gen <= {resetn_gen, pll_locked};
-end
+/*
+reg [7:0] counter;
+assign dadb = counter;
+always @(negedge clk_32mhz) counter <= counter + 1;
+*/
 
 endmodule
