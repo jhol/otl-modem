@@ -27,10 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-module top(clk_100mhz);
+module top(clk_100mhz, adclk, addb, daclk, dadb);
 parameter ClkFreq = 50000000; // Hz
 
 input clk_100mhz;
+output adclk;
+input [7:0] addb;
+output daclk;
+output [7:0] dadb;
 
 // Clock Generator
 wire clk_50mhz;

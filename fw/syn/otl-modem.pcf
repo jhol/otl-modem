@@ -28,3 +28,23 @@
 #
 
 set_io clk_100mhz R9
+
+set_io adclk E6
+set_io addb[0] D1
+set_io addb[1] D2
+set_io addb[2] C1
+set_io addb[3] C2
+set_io addb[4] B1
+set_io addb[5] B2
+set_io addb[6] A1
+set_io addb[7] C5
+
+set_io daclk H4
+set_io dadb[0] H3
+set_io dadb[1] J1
+set_io dadb[2] J2
+set_io dadb[3] K1
+set_io dadb[4] L1
+set_io dadb[5] H5
+set_io dadb[6] M1
+set_io dadb[7] M2
