@@ -19,11 +19,15 @@
 
 #include <SoapySDR/Device.hpp>
 
+struct ftdi_context;
+
 namespace OTLModem {
 
 class Device : public SoapySDR::Device {
 public:
     Device(const SoapySDR::Kwargs &args);
+
+    virtual ~Device();
 
 public:
     std::string getDriverKey() const;
@@ -36,9 +40,14 @@ public:
         const size_t channel) const;
     std::string getNativeStreamFormat(const int direction,
         const size_t channel, double &fullScale) const;
+    SoapySDR::Stream* setupStream(const int direction,
+        const std::string &format, const std::vector<size_t> &channels,
+        const SoapySDR::Kwargs &args);
+    void closeStream(SoapySDR::Stream *stream);
 
 private:
     const SoapySDR::Kwargs args_;
+    ftdi_context *ftdic_;
 };
 
 }

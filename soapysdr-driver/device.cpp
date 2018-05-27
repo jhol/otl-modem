@@ -17,14 +17,28 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
+
+#include <ftdi.h>
 #include <SoapySDR/Formats.h>
 
 #include "device.hpp"
 
 namespace OTLModem {
 
+static std::string makeDeviceString(const SoapySDR::Kwargs &args) {
+    std::ostringstream ss;
+    ss << "d:" << args.at("busnum") << '/' << args.at("devnum");
+    return ss.str();
+}
+
 Device::Device(const SoapySDR::Kwargs &args) :
-    args_(args) {
+    args_(args),
+    ftdic_(nullptr) {
+}
+
+
+Device::~Device() {
 }
 
 std::string Device::getDriverKey() const {
@@ -59,6 +73,68 @@ std::string Device::getNativeStreamFormat(const int direction,
     (void)channel;
     fullScale = 255;
     return SOAPY_SDR_U8;
+}
+
+SoapySDR::Stream* Device::setupStream(const int direction,
+    const std::string &format, const std::vector<size_t> &channels,
+    const SoapySDR::Kwargs &args) {
+    (void)direction;
+    (void)format;
+    (void)channels;
+    (void)args;
+
+    ftdic_ = ftdi_new();
+    if (!ftdic_)
+        throw std::runtime_error("Failed to create libftdi context");
+
+    try {
+        std::ostringstream ss;
+        int ret;
+
+        const std::string deviceString = makeDeviceString(args_);
+        if ((ret = ftdi_usb_open_string(ftdic_, deviceString.c_str())) != 0) {
+            ss << "Failed to open device (" << ret << "): " <<
+                ftdi_get_error_string(ftdic_);
+            throw std::runtime_error(ss.str());
+        }
+
+        if ((ret = ftdi_usb_reset (ftdic_)) != 0) {
+            ss << "Failed to reset device (" << ret << "): " <<
+                ftdi_get_error_string(ftdic_);
+            throw std::runtime_error (ss.str());
+        }
+
+        if ((ret = ftdi_set_bitmode(ftdic_, 0xFF, BITMODE_RESET)) != 0) {
+            ss << "Failed to reset the FTDI chip bitmode (" << ret << "): " <<
+                ftdi_get_error_string(ftdic_);
+            throw std::runtime_error(ss.str());
+        }
+
+        if ((ret = ftdi_usb_purge_buffers(ftdic_)) != 0) {
+            ss << "Failed to purge FTDI RX/TX buffers (" << ret << "): " <<
+                ftdi_get_error_string(ftdic_);
+            throw std::runtime_error(ss.str());
+        }
+
+        if ((ret = ftdi_set_bitmode(ftdic_, 0xFF, BITMODE_SYNCFF)) != 0) {
+            ss << "Failed to put FTDI chip into sync-fifo mode (" << ret <<
+                "): " << ftdi_get_error_string(ftdic_);
+            throw std::runtime_error(ss.str());
+        }
+    } catch (const std::runtime_error &e) {
+        ftdi_usb_close (ftdic_);
+        ftdic_ = NULL;
+        throw e;
+    }
+
+    return nullptr;
+}
+
+void Device::closeStream(SoapySDR::Stream *stream) {
+    (void)stream;
+
+    ftdi_free(ftdic_);
+    ftdic_ = nullptr;
 }
 
 }
