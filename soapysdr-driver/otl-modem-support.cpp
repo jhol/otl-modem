@@ -39,26 +39,11 @@ static SoapySDR::KwargsList listDevices() {
     }
 
     SoapySDR::KwargsList devices;
-    for (ftdi_device_list *curdev = devlist; curdev;
-        curdev = curdev->next) {
-        SoapySDR::Kwargs info;
-
-        {
-            std::ostringstream ss;
-            ss << std::setw(3) << std::setfill('0') <<
-                curdev->dev->bus->location;
-            info["busnum"] = ss.str();
-        }
-        {
-            std::ostringstream ss;
-            ss << std::setw(3) << std::setfill('0') <<
-                int(curdev->dev->devnum);
-            info["devnum"] = ss.str();
-        }
-
-        info["filename"] = curdev->dev->filename;
-
-        devices.push_back(info);
+    for (ftdi_device_list *curdev = devlist; curdev; curdev = curdev->next) {
+        std::ostringstream ss;
+        ss << std::setw(3) << std::setfill('0') << curdev->dev->bus->location;
+        devices.push_back(SoapySDR::Kwargs{
+            {"busnum", ss.str()}, {"devnum", curdev->dev->filename}});
     }
 
     ftdi_list_free(&devlist);
