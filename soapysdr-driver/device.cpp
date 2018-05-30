@@ -57,7 +57,7 @@ SoapySDR::Kwargs Device::getHardwareInfo() const {
 
 size_t Device::getNumChannels(const int dir) const {
     (void)dir;
-    return 2;
+    return (dir == SOAPY_SDR_RX) ? 1 : 0;
 }
 
 std::vector<std::string> Device::getStreamFormats(const int direction,
