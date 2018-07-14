@@ -75,6 +75,13 @@ std::string Device::getNativeStreamFormat(const int direction,
     return SOAPY_SDR_U8;
 }
 
+SoapySDR::RangeList Device::getSampleRateRange(
+    const int direction, const size_t channel) const {
+    (void)direction;
+    (void)channel;
+    return {{8000000.0, 8000000.0}};
+}
+
 SoapySDR::Stream* Device::setupStream(const int direction,
     const std::string &format, const std::vector<size_t> &channels,
     const SoapySDR::Kwargs &args) {

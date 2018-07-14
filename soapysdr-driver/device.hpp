@@ -40,6 +40,9 @@ public:
         const size_t channel) const;
     std::string getNativeStreamFormat(const int direction,
         const size_t channel, double &fullScale) const;
+    SoapySDR::RangeList getSampleRateRange(
+        const int direction, const size_t channel) const;
+
     SoapySDR::Stream* setupStream(const int direction,
         const std::string &format, const std::vector<size_t> &channels,
         const SoapySDR::Kwargs &args);
