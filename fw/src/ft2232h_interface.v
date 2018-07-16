@@ -27,33 +27,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-`timescale 1ps/1ps
+module ft2232h_interface(
+  input clk,
+  input reset,
+  inout [7:0] io,
+  input rxf_n,
+  input txe_n,
+  output rd_n,
+  output wr_n,
+  input clkout,
+  output oe_n,
+  output siwu
+);
 
-module test;
-parameter ClkFreq = 100000000; // Hz
-parameter ClkOutFreq = 60000000; // Hz
-
-reg reset = 0;
-initial begin
-  $dumpfile("ft2232h_interface.vcd");
-  $dumpvars(0, test);
-
-  #10000 reset = 1;
-  #20000 reset = 0;
-  #1000000 $finish;
-end
-
-reg clk = 0;
-always #(1000000000000/ClkFreq) clk = !clk;
-
-reg clkout = 0;
-always #(1000000000000/ClkOutFreq) clkout = !clkout;
-
-wire [7:0] io;
-wire rxf_n, txe_n, rd_n, wr_n, oe_n, siwu;
-
-ft2232h_interface #(ClkFreq) ft2232h_interface(
-  clk, reset, io, rxf_n, txe_n, rd_n, wr_n, clkout, oe_n, siwu
-  );
+assign siwu = 1'b1;
 
 endmodule
