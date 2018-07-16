@@ -41,5 +41,15 @@ otl-modem.asc: otl-modem.blif syn/otl-modem.pcf
 otl-modem.bin: otl-modem.asc
 	icepack $< $@
 
+simulate-ft2232h_interface: ft2232h_interface.vcd
+	gtkwave $< >/dev/null 2>/dev/null &
+
+ft2232h_interface-sim: sim/ft2232h_interface.v
+	iverilog -o $@ $^
+
+%.vcd: %-sim
+	cd $(dir $<); ./$(notdir $<)
+
 .PHONY: \
-  synthesize
+  synthesize \
+  simulate-ft2232h_interface \
