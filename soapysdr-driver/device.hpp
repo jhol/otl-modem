@@ -48,6 +48,9 @@ public:
         const SoapySDR::Kwargs &args);
     void closeStream(SoapySDR::Stream *stream);
     size_t getStreamMTU(SoapySDR::Stream *stream) const;
+    int readStream(SoapySDR::Stream *stream, void *const *buffs,
+        const size_t numElems, int &flags, long long &timeNs,
+        const long timeoutUs);
 
 private:
     const SoapySDR::Kwargs args_;

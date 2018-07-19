@@ -151,4 +151,18 @@ size_t Device::getStreamMTU(SoapySDR::Stream *stream) const {
     return MTU;
 }
 
+int Device::readStream(SoapySDR::Stream *stream, void *const *buffs,
+    const size_t numElems, int &flags, long long &timeNs,
+    const long timeoutUs) {
+    (void)stream;
+    (void)flags;
+    (void)timeNs;
+
+    ftdic_->usb_read_timeout = timeoutUs / 1000L;
+    const int ret = ftdi_read_data(ftdic_, (unsigned char*)buffs[0], numElems);
+    if (ret >= 0)
+        return ((size_t)ret == numElems) ? ret : SOAPY_SDR_UNDERFLOW;
+    return SOAPY_SDR_STREAM_ERROR;
+}
+
 }
