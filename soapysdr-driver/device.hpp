@@ -47,6 +47,7 @@ public:
         const std::string &format, const std::vector<size_t> &channels,
         const SoapySDR::Kwargs &args);
     void closeStream(SoapySDR::Stream *stream);
+    size_t getStreamMTU(SoapySDR::Stream *stream) const;
 
 private:
     const SoapySDR::Kwargs args_;

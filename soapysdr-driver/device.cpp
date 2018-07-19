@@ -26,6 +26,8 @@
 
 namespace OTLModem {
 
+static const size_t MTU = 16 * 1024;
+
 static std::string makeDeviceString(const SoapySDR::Kwargs &args) {
     std::ostringstream ss;
     ss << "d:" << args.at("busnum") << '/' << args.at("devnum");
@@ -142,6 +144,11 @@ void Device::closeStream(SoapySDR::Stream *stream) {
 
     ftdi_free(ftdic_);
     ftdic_ = nullptr;
+}
+
+size_t Device::getStreamMTU(SoapySDR::Stream *stream) const {
+    (void)stream;
+    return MTU;
 }
 
 }
