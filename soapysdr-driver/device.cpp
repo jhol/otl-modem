@@ -30,7 +30,12 @@ static const size_t MTU = 16 * 1024;
 
 static std::string makeDeviceString(const SoapySDR::Kwargs &args) {
     std::ostringstream ss;
-    ss << "d:" << args.at("busnum") << '/' << args.at("devnum");
+    try {
+        ss << "d:" << args.at("busnum") << '/' << args.at("devnum");
+    } catch (std::out_of_range &e) {
+        throw std::runtime_error(
+            "Both \"busnum\" and \"devnum\" arguments must be provided");
+    }
     return ss.str();
 }
 
