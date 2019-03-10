@@ -5,3 +5,5 @@
 *.blif
 *.hex
 *.vcd
+*.rpt
+/.vs

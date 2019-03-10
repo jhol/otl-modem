@@ -27,19 +27,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
+PROJ = otl-modem
+PIN_DEF = syn/otl-modem.pcf
+DEVICE = hx8k
+
+ARACHNE = arachne-pnr 
+ARACHNE_ARGS = 
+ICEPACK = icepack
+ICETIME = icetime
+ICEPROG = iceprog
+
 src=
+
+all: $(PROJ).bin
 
 synthesize: otl-modem.bin
 
-otl-modem.blif: syn/top.v $(src)
-	yosys -q -p "synth_ice40 -blif otl-modem.blif" syn/top.v $(src)
+%.blif: syn/top.v $(src)
+	yosys -p 'synth_ice40 -top top -blif $@' $<
+	# yosys -q -p "synth_ice40 -blif otl-modem.blif" syn/top.v $(src)
 
-otl-modem.asc: otl-modem.blif syn/otl-modem.pcf
-	arachne-pnr -d 8k -p syn/otl-modem.pcf $< -o $@
-	icetime -d hx8k -c 50 $@
+%.asc: $(PIN_DEF) %.blif syn/otl-modem.pcf
+	$(ARACHNE) $(ARACHNE_ARGS) -d $(subst up,,$(subst hx,,$(subst lp,,$(DEVICE)))) -o $@ -p $^
 
-otl-modem.bin: otl-modem.asc
-	icepack $< $@
+%.rpt: %.asc
+	$(ICETIME) -d $(DEVICE) -P tq144 -p syn/otl-modem.pcf -mtr $@ $<
+
+%.bin: %.asc
+	$(ICEPACK) $< $@
 
 simulate-ft2232h_interface: ft2232h_interface.vcd
 	gtkwave $< >/dev/null 2>/dev/null &
@@ -51,6 +66,12 @@ ft2232h_interface-sim: \
 
 %.vcd: %-sim
 	cd $(dir $<); ./$(notdir $<)
+
+clean:
+	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
+
+.SECONDARY:
+.PHONY: all prog clean
 
 .PHONY: \
   synthesize \
